@@ -2672,7 +2672,8 @@ class UIutils {
             horizontalTextAlignment: TextAlignment.START,
             verticalTextAlignment: TextAlignment.CENTER,
             textColor: variable.level == 1 ? Color.TEXT : Color.TEXT_MEDIUM,
-            column: 0
+            column: 0,
+            fontSize: 12
         });
         
         let labelRight = ui.createLabel({
@@ -2680,7 +2681,7 @@ class UIutils {
             horizontalTextAlignment: TextAlignment.CENTER,
             verticalTextAlignment: TextAlignment.START,
             textColor: variable.level == 1 ? Color.TEXT : Color.TEXT_MEDIUM,
-            fontSize: 28
+            fontSize: 24
         });
         
         let frameRight = ui.createFrame({
