@@ -2693,7 +2693,7 @@ class UIutils {
         });
         
         let grid = ui.createGrid({
-            columnDefinitions: ["1*", 25],
+            columnDefinitions: ["1*", 20],
             children: [labelLeft, frameRight]
         });
         
