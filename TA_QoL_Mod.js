@@ -2815,7 +2815,7 @@ var getUpgradeListDelegate = () => {
 
     let topGrid = ui.createGrid({
         columnSpacing: 3,
-        rowSpacing: 3,
+        rowSpacing: 1,
         rowDefinitions: [height, height],
         children: [
             enableVariablePurchaseButton, 
