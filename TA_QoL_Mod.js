@@ -2913,8 +2913,8 @@ var getUpgradeListDelegate = () => {
     // [최종 조립] 순서 보존: 원본 컴포넌트들 하단에 QoL 요소들을 차례로 결합
     // -----------------------------------------------------------------
     let stack = ui.createStackLayout({
-        padding: Thickness(0, 3, 0, 0, 0, 0),
-        spacing: 3,
+        padding: Thickness(0, 3, 0, 0),
+        spacing: 1,
         children: [
             performTheorySwitchGrid, // 원본 1
             topGrid,                  // 원본 2
