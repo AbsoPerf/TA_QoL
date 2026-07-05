@@ -2790,7 +2790,8 @@ var getUpgradeListDelegate = () => {
         
     let performTheorySwitchButton = UIutils.createTheorySwitchButton();
     
-    let height = ui.screenHeight * 0.03;
+    let height = ui.screenHeight * 0.045;
+    // let height = 50;
         
     let performTheorySwitchGrid = ui.createGrid({
         rowDefinitions: [height],
@@ -2816,7 +2817,7 @@ var getUpgradeListDelegate = () => {
     let topGrid = ui.createGrid({
         columnSpacing: 3,
         rowSpacing: 3,
-        rowDefinitions: [height, height],
+        rowDefinitions: ["1*", "1*"],
         children: [
             enableVariablePurchaseButton, 
             enableMSPurchaseButton, 
@@ -2830,13 +2831,16 @@ var getUpgradeListDelegate = () => {
         let newButton = UIutils.createLatexButton("Theory " + (i + 1), theory.upgrades[i], i);
         newButton.row = i % 4;
         newButton.column = Math.floor(i / 4);
+        // newButton.column = i % 4;
+        // newButton.row = Math.floor(i / 4);
         buttonArray.push(newButton);    
     }
     
     let bottomGrid = ui.createGrid({
         columnSpacing: 3,
         rowSpacing: 3,
-        rowDefinitions: [height, height, height, height],
+        rowDefinitions: ["1*", "1*", "1*", "1*"],
+        // rowDefinitions: ["1*", "1*"],
         children: buttonArray
     });
     
@@ -2884,6 +2888,8 @@ var getUpgradeListDelegate = () => {
     r9toggleStack.row = 0; r9toggleStack.column = 2;
 
     let qolAutoGrid = ui.createGrid({
+		columnSpacing: 3,
+        rowSpacing: 3,
         columnDefinitions: ["1*", "1*", 60],
         children: [reStar, reSigma, r9toggleStack]
     });
@@ -2905,6 +2911,8 @@ var getUpgradeListDelegate = () => {
 	r9CycleButton.row = 0; r9CycleButton.column = 1;
 
 	let qolCycleGrid = ui.createGrid({
+		columnSpacing: 3,
+        rowSpacing: 3,
 		columnDefinitions: ["1*", "1*"],
 		children: [autoFreqButton, r9CycleButton]
 	});
@@ -2916,14 +2924,16 @@ var getUpgradeListDelegate = () => {
         padding: Thickness(0, 3, 0, 0),
         spacing: 3,
         children: [
+			qolAutoGrid,              // QoL 스타/학생/R9 그리드
+            qolCycleGrid,           // QoL R9 cycle 그리드
+            qolSeparator,             // QoL 구분선
+
             performTheorySwitchGrid, // 원본 1
             topGrid,                  // 원본 2
-            qolAutoGrid,              // QoL 스타/학생/R9 그리드
-            qolCycleGrid,           // QoL R9 cycle 그리드
             separator,                // 원본 3
             scrollView,               // 원본 4
             
-            // qolSeparator,             // QoL 구분선
+
         ]
     });    
             
