@@ -2814,8 +2814,8 @@ var getUpgradeListDelegate = () => {
     enableTheorySwitchButton.column = 1;
 
     let topGrid = ui.createGrid({
-        columnSpacing: 1,
-        rowSpacing: 1,
+        columnSpacing: 3,
+        rowSpacing: 3,
         rowDefinitions: [height, height],
         children: [
             enableVariablePurchaseButton, 
@@ -2834,8 +2834,8 @@ var getUpgradeListDelegate = () => {
     }
     
     let bottomGrid = ui.createGrid({
-        columnSpacing: 1,
-        rowSpacing: 1,
+        columnSpacing: 3,
+        rowSpacing: 3,
         rowDefinitions: [height, height, height, height],
         children: buttonArray
     });
@@ -2900,7 +2900,7 @@ var getUpgradeListDelegate = () => {
         text: () => state.useR9Cycle ? `R9 Cycle: ${state.r9CycleX}/${state.r9CycleY}` : "R9 Cycle: OFF",
         onClicked: () => PopupUtils.showR9CyclePopup()
     });
-            
+
 	autoFreqButton.row = 0; autoFreqButton.column = 0;
 	r9CycleButton.row = 0; r9CycleButton.column = 1;
 
