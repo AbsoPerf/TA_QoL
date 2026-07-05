@@ -2790,7 +2790,7 @@ var getUpgradeListDelegate = () => {
         
     let performTheorySwitchButton = UIutils.createTheorySwitchButton();
     
-    let height = ui.screenHeight * 0.055;
+    let height = ui.screenHeight * 0.05;
         
     let performTheorySwitchGrid = ui.createGrid({
         rowDefinitions: [height],
