@@ -2835,7 +2835,7 @@ var getUpgradeListDelegate = () => {
     
     let bottomGrid = ui.createGrid({
         columnSpacing: 3,
-        rowSpacing: 3,
+        rowSpacing: 1,
         rowDefinitions: [height, height, height, height],
         children: buttonArray
     });
