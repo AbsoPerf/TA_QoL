@@ -2914,7 +2914,7 @@ var getUpgradeListDelegate = () => {
     // -----------------------------------------------------------------
     let stack = ui.createStackLayout({
         padding: Thickness(0, 3, 0, 0),
-        spacing: 1,
+        spacing: 3,
         children: [
             performTheorySwitchGrid, // 원본 1
             topGrid,                  // 원본 2
