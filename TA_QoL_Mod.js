@@ -2901,6 +2901,14 @@ var getUpgradeListDelegate = () => {
         onClicked: () => PopupUtils.showR9CyclePopup()
     });
             
+	autoFreqButton.row = 0; autoFreqButton.column = 0;
+	r9CycleButton.row = 0; r9CycleButton.column = 1;
+
+	let qolCycleGrid = ui.createGrid({
+		columnDefinitions: ["1*", "1*"],
+		children: [autoFreqButton, r9CycleButton]
+	});
+            
     // -----------------------------------------------------------------
     // [최종 조립] 순서 보존: 원본 컴포넌트들 하단에 QoL 요소들을 차례로 결합
     // -----------------------------------------------------------------
@@ -2910,13 +2918,12 @@ var getUpgradeListDelegate = () => {
         children: [
             performTheorySwitchGrid, // 원본 1
             topGrid,                  // 원본 2
+            qolAutoGrid,              // QoL 스타/학생/R9 그리드
+            qolCycleGrid,           // QoL R9 cycle 그리드
             separator,                // 원본 3
             scrollView,               // 원본 4
             
-            qolSeparator,             // QoL 구분선
-            qolAutoGrid,              // QoL 스타/학생/R9 그리드
-            autoFreqButton,           // QoL 빈도 설정 버튼
-            r9CycleButton             // QoL R9 사이클 버튼
+            // qolSeparator,             // QoL 구분선
         ]
     });    
             
