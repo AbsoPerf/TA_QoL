@@ -2814,7 +2814,7 @@ var getUpgradeListDelegate = () => {
     enableTheorySwitchButton.column = 1;
 
     let topGrid = ui.createGrid({
-        columnSpacing: 3,
+        columnSpacing: 1,
         rowSpacing: 1,
         rowDefinitions: [height, height],
         children: [
@@ -2834,7 +2834,7 @@ var getUpgradeListDelegate = () => {
     }
     
     let bottomGrid = ui.createGrid({
-        columnSpacing: 3,
+        columnSpacing: 1,
         rowSpacing: 1,
         rowDefinitions: [height, height, height, height],
         children: buttonArray
@@ -2913,7 +2913,7 @@ var getUpgradeListDelegate = () => {
     // [최종 조립] 순서 보존: 원본 컴포넌트들 하단에 QoL 요소들을 차례로 결합
     // -----------------------------------------------------------------
     let stack = ui.createStackLayout({
-        padding: Thickness(0, 3, 0, 0),
+        padding: Thickness(0, 3, 0, 0, 0, 0),
         spacing: 3,
         children: [
             performTheorySwitchGrid, // 원본 1
