@@ -2794,7 +2794,7 @@ var getUpgradeListDelegate = () => {
     // let height = 50;
         
     let performTheorySwitchGrid = ui.createGrid({
-        rowDefinitions: [height],
+        rowDefinitions: ["1*"],
         children: [performTheorySwitchButton]
     })
             
@@ -2829,18 +2829,18 @@ var getUpgradeListDelegate = () => {
     buttonArray = [];
     for (let i = 0; i < 8; i++) {
         let newButton = UIutils.createLatexButton("Theory " + (i + 1), theory.upgrades[i], i);
-        newButton.row = i % 4;
-        newButton.column = Math.floor(i / 4);
-        // newButton.column = i % 4;
-        // newButton.row = Math.floor(i / 4);
+        // newButton.row = i % 4;
+        // newButton.column = Math.floor(i / 4);
+        newButton.column = i % 4;
+        newButton.row = Math.floor(i / 4);
         buttonArray.push(newButton);    
     }
     
     let bottomGrid = ui.createGrid({
         columnSpacing: 3,
         rowSpacing: 3,
-        rowDefinitions: ["1*", "1*", "1*", "1*"],
-        // rowDefinitions: ["1*", "1*"],
+        // rowDefinitions: ["1*", "1*", "1*", "1*"],
+        rowDefinitions: ["1*", "1*"],
         children: buttonArray
     });
     
