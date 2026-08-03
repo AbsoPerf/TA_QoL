@@ -446,13 +446,13 @@ class AllocUtils {
     }
 }
 AllocUtils.MAX_DFS_SIZE = 300;
-
 // =====================================================================
 // [4] PopupUtils (설정 다이얼로그 팝업 제어 클래스)
 // =====================================================================
 class PopupUtils {
     static showAutoFreqPopup() {
-        let record = state.autoFreq.toString();
+        // null 병합 연산자를 통해 undefined 에러 방지
+        let record = (state.autoFreq ?? -1).toString();
         let entry = ui.createEntry({
             placeholder: record,
             onTextChanged: (_, s) => { record = s; }
@@ -483,8 +483,9 @@ class PopupUtils {
     }
 
     static showR9CyclePopup() {
-        let recordX = state.r9CycleX.toString();
-        let recordY = state.r9CycleY.toString();
+        // 기존 세이브 데이터에 값이 없을 경우를 대비한 안전장치 추가
+        let recordX = (state.r9CycleX ?? 100).toString();
+        let recordY = (state.r9CycleY ?? 100).toString();
 
         let entryX = ui.createEntry({
             placeholder: "X Ticks (Buy R9)",
@@ -497,6 +498,7 @@ class PopupUtils {
             onTextChanged: (_, s) => { recordY = s; }
         });
         let toggleSwitch = ui.createSwitch({
+            onColor: Color.SWITCH_BACKGROUND,
             isToggled: () => state.useR9Cycle,
             onTouched: (e) => { if (e.type == TouchType.PRESSED) state.useR9Cycle = !state.useR9Cycle; }
         });
@@ -517,15 +519,19 @@ class PopupUtils {
             }),
         });
 
-		apply.onClicked = () => {
+        apply.onClicked = () => {
             let x = parseInt(recordX);
             let y = parseInt(recordY);
             if (!isNaN(x) && x >= 0) state.r9CycleX = x;
             if (!isNaN(y) && y >= 0) state.r9CycleY = y;
+            
+            // 설정 변경 시 카운터와 페이즈를 즉시 리셋하여 변경사항을 바로 적용
             state.r9TickCounter = 0; 
-            state.r9Phase = -1; // 설정 변경 시 즉시 재할당을 트리거하도록 초기화
+            state.r9Phase = -1; 
+            
             popup.hide();
         };
+        popup.show();
     }
 }
 
@@ -540,8 +546,8 @@ class State {
         this.useR9Cycle = false; 
         this.r9CycleX = 100;     
         this.r9CycleY = 100;     
-        this.r9TickCounter = 0;
-        this.r9Phase = -1; // -1: 미정/초기화, 0: X 페이즈(R9 ON), 1: Y 페이즈(R9 OFF)
+        this.r9TickCounter = 0;  
+        this.r9Phase = -1;       // -1: 리셋상태, 0: X 페이즈(R9 켬), 1: Y 페이즈(R9 끔)
     }
     serialize() { return JSON.stringify(this, customReplacer); }
     importSerialization(s) {
