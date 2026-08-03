@@ -517,15 +517,15 @@ class PopupUtils {
             }),
         });
 
-        apply.onClicked = () => {
+		apply.onClicked = () => {
             let x = parseInt(recordX);
             let y = parseInt(recordY);
             if (!isNaN(x) && x >= 0) state.r9CycleX = x;
             if (!isNaN(y) && y >= 0) state.r9CycleY = y;
             state.r9TickCounter = 0; 
+            state.r9Phase = -1; // 설정 변경 시 즉시 재할당을 트리거하도록 초기화
             popup.hide();
         };
-        popup.show();
     }
 }
 
@@ -540,7 +540,8 @@ class State {
         this.useR9Cycle = false; 
         this.r9CycleX = 100;     
         this.r9CycleY = 100;     
-        this.r9TickCounter = 0;  
+        this.r9TickCounter = 0;
+        this.r9Phase = -1; // -1: 미정/초기화, 0: X 페이즈(R9 ON), 1: Y 페이즈(R9 OFF)
     }
     serialize() { return JSON.stringify(this, customReplacer); }
     importSerialization(s) {
@@ -2589,48 +2590,65 @@ class T8 {
 		return false;
 		
 	}	
-	
 }
 
 // =====================================================================
-// [8] 통합 tick 함수 (오프라인 프로그레스 및 대량 elapsedTime 대응 수정본)
+// [8] 통합 tick 함수 (R9 Cycle 완벽 연동 및 Offline 호환 수정본)
 // =====================================================================
 var tick = (elapsedTime, multiplier) => {
 
-    // 1. 해당 tick 호출 동안 실제로 경과한 실제 유효 게임 틱 수 계산 (1초 = 10틱 기준)
+    // 1. 경과 시간 기반 실제 게임 틱 수 계산 (1초 = 10틱)
     let dtTicks = elapsedTime * multiplier * 10;
 
-    // A. QoL Theory Mod: R9 사이클 타임 스위칭 처리 (오프라인 호환 피드포워드 방식)
+    // -----------------------------------------------------------------
+    // A. R9 Cycle 및 스탯 자동 재할당(Reallocation) 제어
+    // -----------------------------------------------------------------
     if (state.useR9Cycle) {
-        if (state.r9TickCounter === undefined) state.r9TickCounter = 0;
         let totalCycle = state.r9CycleX + state.r9CycleY;
         if (totalCycle > 0) {
-            let currentPos = state.r9TickCounter % totalCycle;
-            let prevUseR9 = state.useR9;
-            state.useR9 = (currentPos < state.r9CycleX);
+            if (state.r9TickCounter === undefined) state.r9TickCounter = 0;
             
-            //  중요: 오프라인 연산 중 R9 할당 상태가 true/false로 변동되는 순간 
-            // 즉시 학생 재분배를 트리거하여 해당 시점의 학생 효율을 실시간 반영하도록 합니다.
-            if (state.useR9 !== prevUseR9) {
+            // 현재 사이클 위치 및 페이즈 계산 (0: X 페이즈, 1: Y 페이즈)
+            let pos = state.r9TickCounter % totalCycle;
+            let currentPhase = (pos < state.r9CycleX) ? 0 : 1;
+
+            // 페이즈가 전환된 시점(X->Y 또는 Y->X), 혹은 사이클이 새로 켜진 경우 실행
+            if (currentPhase !== state.r9Phase) {
+                state.r9Phase = currentPhase;
+                
+                if (currentPhase === 0) {
+                    // [1단계] R9 구매 포함 reallocation -> X tick 동안 대기
+                    state.useR9 = true;
+                } else {
+                    // [2단계] R9 구매 없이 reallocation -> Y tick 동안 대기
+                    state.useR9 = false;
+                }
+                
+                // R9 플래그 설정 후 즉시 ★(별) 및 σ(학생) 스탯 최적화 재할당 수행
+                AllocUtils.simpleStar();
                 AllocUtils.simpleStudent();
             }
+
+            // 카운터 누적 (대기 시간 진행)
+            state.r9TickCounter += dtTicks;
         }
-        //  수정 포인트: 단순 ++ 대신, 오프라인 경과 시간(dtTicks) 만큼 정확하게 누적시킵니다.
-        state.r9TickCounter += dtTicks; 
+    } else {
+        // R9 Cycle OFF 상태: autoFreq 설정 주기에 따라 정기적으로 재할당 동작
+        state.r9Phase = -1; // 사이클 OFF 시 페이즈 상태 초기화
+        
+        if (state.allocTickCounter === undefined) state.allocTickCounter = 0;
+        state.allocTickCounter += dtTicks;
+
+        if (state.autoFreq >= MIN_FREQ && state.allocTickCounter >= state.autoFreq) {
+            AllocUtils.simpleStar();
+            AllocUtils.simpleStudent();
+            state.allocTickCounter %= state.autoFreq; // 잔여 틱을 이월시켜 주기를 유지합니다.
+        }
     }
 
-    // B. QoL Theory Mod: 주기적인 별(★) 및 학생(σ) 리밸런싱 실행 (틱 점프/건너뛰기 방지)
-    if (state.allocTickCounter === undefined) state.allocTickCounter = 0;
-    state.allocTickCounter += dtTicks;
-
-    // 배수(%) 판정 대신 누적된 카운터가 기준치를 넘었는지 체크하여 오프라인에서도 누락 없이 작동합니다.
-    if (state.autoFreq >= MIN_FREQ && state.allocTickCounter >= state.autoFreq) {
-        AllocUtils.simpleStar();
-        AllocUtils.simpleStudent();
-        state.allocTickCounter %= state.autoFreq; // 잔여 틱을 이월시켜 주기를 유지합니다.
-    }
-
-    // C. Theory Automator 코어 로직: 액티브 이론 분석 및 상태 천이
+    // -----------------------------------------------------------------
+    // B. Theory Automator 코어 로직 (이론 자동 구매/출판/스위칭)
+    // -----------------------------------------------------------------
     if (game.activeTheory?.id === 8) return;
 
     if (game.activeTheory !== null) {
