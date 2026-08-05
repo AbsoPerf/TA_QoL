@@ -2853,7 +2853,7 @@ var getUpgradeListDelegate = () => {
     
     buttonArray = [];
     for (let i = 0; i < 8; i++) {
-        let newButton = UIutils.createLatexButton("Theory " + (i + 1), theory.upgrades[i], i);
+        let newButton = UIutils.createLatexButton("T " + (i + 1), theory.upgrades[i], i);
         // newButton.row = i % 4;
         // newButton.column = Math.floor(i / 4);
         newButton.column = i % 4;
@@ -2922,7 +2922,7 @@ var getUpgradeListDelegate = () => {
     let autoFreqButton = ui.createButton({
         text: () => {
             const f = (state.autoFreq < MIN_FREQ) ? "Never" : `${state.autoFreq} ticks`;
-            return "Auto-reallocation frequency: " + f;
+            return "Auto-realloc. freq.: " + f;
         },
         onClicked: () => PopupUtils.showAutoFreqPopup()
     });
